@@ -4,14 +4,13 @@ import re
 from tqdm import tqdm
 import pandas as pd
 
-from IPython import embed
-
 # assumes SRT format: 
 # <subtitle number>
 # <start> --> <end> (hr:min:sec,ms)
 # <subtitle1>
 # <subtitle2> (optional)
 # \n
+# (next subtitle)
 
 
 remove_temp = True
@@ -54,10 +53,10 @@ for c,i in enumerate(subs_raw):
 			text_file.write(word)
 
 
-# print("performing forced-alignment")
-# for i in tqdm(headers_idx):
-# 	execute = "python %s -s %.2f -e %.2f %s %s__temp%d.txt %s__temp%d.TextGrid"%(loc_py, starts[i], ends[i], loc_wav, loc_out, i, loc_out, i)
-# 	os.system(execute)
+print("performing forced-alignment")
+for i in tqdm(headers_idx):
+	execute = "python %s -s %.2f -e %.2f %s %s__temp%d.txt %s__temp%d.TextGrid"%(loc_py, starts[i], ends[i], loc_wav, loc_out, i, loc_out, i)
+	os.system(execute)
 
 
 print("aggregating timings")
@@ -76,9 +75,12 @@ for i in headers_idx:
 			all_ends.append(ends[c])
 			all_words.append(w[1:-1])
 
-embed()
-
 savedat = pd.DataFrame()
 savedat["start"] = all_starts
 savedat["end"] = all_ends
 savedat["word"] = all_words
+savedat.to_csv(loc_out+"forrest_forced_aligned.csv")
+
+if remove_temp:
+	execute = "rm %s__temp*"%loc_out
+	os.system(execute)
