@@ -1,6 +1,7 @@
 # forced_align_srt
 
 Fork of Penn Phonetics Lab Forced Aligner for use with movies. 
+
 Takes:
 - A subtitle file (.srt)
 - The movie audio (.wav)
